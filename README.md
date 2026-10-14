@@ -61,7 +61,7 @@ The donor Hamiltonian has the same form as hydrogen, just rescaled for the host 
 α_host = α_H × (m* / ε_r)²
 ```
 
-For ZnSe I use m* = 0.16 and ε_r = 8.8. For silicon it is m* = 0.3 and ε_r = 11.7.
+For ZnSe I use m* = 0.16 and ε_r = 8.8.
 
 ### Hamiltonian
 
@@ -74,7 +74,7 @@ Everything is in Hartree atomic units, with ε₀ = 1/(4π). The matrix elements
 - **Overlap:** `S_ij = (π / p)^(3/2)`
 - **Kinetic:** `T_ij = (3 / m*) × α_i α_j π^(3/2) / p^(5/2)`
 - **Screened Coulomb:** `V_H,ij = -1 / (2ε) × 1 / p`
-- **Central cell:** `V_cc = -e²/(4πr) × (1/ε₀ - 1/ε) × e^(-r/r_cc)`
+- **Central cell (Saraiva et al.):** `V_cc = -e²/(4πr) × (1/ε₀ - 1/ε) × e^(-r/r_cc)`
 
 Energies are converted to meV by multiplying by 27211.38.
 
@@ -176,31 +176,17 @@ Because the circuit works on 8 amplitudes, `qml.state()` returns an 8-component 
 
 ## Results
 
-### Hydrogen
-
-| Basis | Best energy (Ha) | Error (Ha) |
-|---|---|---|
-| STO-4G | -0.4988 | 0.0012 |
-| STO-5G | -0.4996 | 0.0004 |
-| STO-6G | -0.4999 | 0.0001 |
-
-Converges from above as expected, and never hits -0.5 because of the cusp.
-
-### Silicon donors
-
-All solvers agree with each other (with enough parameters), but they do not match experiment. For example, at STO-4G: P -41.89, As -46.47, Sb -39.63, Bi -57.62 meV. This is a model problem and not a code problem. The silicon conduction band has six minima, while my Hamiltonian only has one valley, and the r_cc values from Saraiva et al. were fitted for the multi-valley model.
-
-### Indium in ZnSe
-
-Fitted r_cc values:
+### Fitted r_cc
 
 | Basis | r_cc (a.u.) |
 |---|---|
 | STO-4G | 0.3542 |
 | STO-5G | 0.1521 |
-| STO-6G | 0.0001 |
+| STO-6G | 3.96739525e-05 |
 
-r_cc shrinks quickly as the basis gets bigger. At STO-6G it is so small that the central-cell term basically switches off, and the basis reaches -28.1 meV on its own. So **these r_cc values are basis-dependent** and are compensating for basis incompleteness. They are not a physical description of the indium core and should not be compared with the silicon values.
+r_cc shrinks quickly as the basis gets bigger. At STO-6G it is so small that the central-cell term basically switches off, and the basis reaches -28.1 meV on its own. So **these r_cc values are basis-dependent** and are compensating for basis incompleteness. They are not a physical description of the indium core.
+
+### Ground-state energy
 
 Best ground-state energy (meV) from each method over 10 restarts:
 
@@ -217,19 +203,6 @@ This lines up with the parameter count. At STO-4G everything matches. At STO-5G 
 
 Since r_cc was fitted to hit -28.1 meV, the solvers agreeing on that number is by construction. What it does show is that the quantum solvers match the classical one when they have enough parameters.
 
-### Runtime
-
-- Classical diagonalisation is 3 to 4 orders of magnitude faster than any variational method at these sizes.
-- **Per step**, VQE is cheaper than NO-VQE since NO-VQE runs the circuit twice.
-- **Total convergence** at 3 qubits tells a different story. NO-VQE converged much faster with 2 layers: 31.09 s vs 121.4 s at STO-5G, and 53.78 s vs 79.22 s at STO-6G. VQE also had a much larger spread across restarts, which points to a landscape with more false minima that BFGS gets stuck in.
-- **1-layer NO-VQE** is a good trade-off when you only need the energy. Even though it is under the parameter threshold, it got within about 0.1 meV of the classical answer.
-
-### Eigenvectors
-
-- VQE eigenvectors match the Löwdin coefficients, and the component with the largest exponent (closest to the core) has the smallest weight, which is what you would expect physically.
-- NO-VQE and plain classical eigenvectors come out peaked in the middle. That is because the primitives are non-orthogonal and unnormalised, so the coefficients do not represent real probabilities.
-
-**If you need the energy only, use NO-VQE. If you need meaningful coefficients, use an orthonormal basis (or VQE with Löwdin).**
 
 ## Running it
 
