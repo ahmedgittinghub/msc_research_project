@@ -8,13 +8,7 @@ A donor atom in a semiconductor binds one weakly held electron, and that electro
 
 To predict how that spin responds to electric and magnetic fields, you first need an accurate ground state. Most of the time the electron sits far from the impurity core and behaves like a hydrogen electron. There is still a small chance of it being very close to the core, where the hydrogen picture stops working. That is what the **central-cell correction** accounts for, and it is the part of the model this project depends on most.
 
-## Validation ladder
-
-I built confidence in the code in three stages before running the actual target:
-
-1. **Hydrogen**: known exact answer of -0.5 Hartree.
-2. **P, As, Sb and Bi donors in silicon**: tabulated r_cc values and experimental binding energies from Saraiva et al.
-3. **Indium in ZnSe**: no tabulated r_cc, so I fitted it to reproduce the measured binding energy of -28.1 meV (Merz et al.).
+There is no tabulated central-cell parameter (r_cc) for indium in ZnSe, so I fit it to reproduce the measured binding energy of -28.1 meV (Merz et al.).
 
 ## Repo layout
 
