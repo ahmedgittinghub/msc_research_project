@@ -30,7 +30,7 @@ The physics code (the integrals, building H and S) is identical in every folder.
 | | STO-4G | STO-5G | STO-6G |
 |---|---|---|---|
 | Primitives in `alpha_dict` | 4 | 5 | 6 |
-| r_cc in `pe_cc_func` | 0.3542 | 0.1521 | 0.0001 |
+| r_cc in `pe_cc_func` | 0.3542 | 0.1521 | 3.96739525e-05 |
 | `nqubits` | 2 | 3 | 3 |
 | Padding to 8 × 8 | No | Yes | Yes |
 | Parameters (1 layer / 2 layers) | 8 / 12 | 12 / 18 | 12 / 18 |
